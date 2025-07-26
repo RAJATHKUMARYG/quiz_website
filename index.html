@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- STUDENT LOGIN -->
+  <div class="container" id="login-section">
+    <h1>Student Login</h1>
+    <input type="text" id="name" placeholder="Enter your Name" required>
+    <input type="text" id="usn" placeholder="Enter your USN" required>
+    <button onclick="startQuiz()">Start Quiz</button>
+    <hr>
+    <button onclick="showAdminLogin()">Admin Login</button>
+  </div>
+
+  <!-- ADMIN LOGIN -->
+  <div class="container" id="admin-login-section" style="display:none;">
+    <h2>Admin Login</h2>
+    <input type="password" id="adminPass" placeholder="Enter Admin Password">
+    <button onclick="loginAdmin()">Login as Admin</button>
+    <button onclick="goHome()">Back</button>
+  </div>
+
+  <!-- QUIZ SECTION -->
+  <div class="container" id="quiz-section" style="display:none;">
+    <div id="user-info"></div>
+    <div id="timer">Time Left: <span id="time">30</span> sec</div>
+    <div id="questionBox"></div>
+    <div id="optionsBox"></div>
+    <button onclick="nextQuestion()">Next</button>
+    <div id="answerBox"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="container" id="result-section" style="display:none;">
+    <h2>Quiz Completed!</h2>
+    <p id="finalScore"></p>
+    <button onclick="goHome()">Go to Home</button>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="container" id="admin-section" style="display:none;">
+    <h2>Admin Panel</h2>
+
+    <h3>Add New Question</h3>
+    <input type="text" id="newQuestion" placeholder="Enter Question">
+    <input type="text" id="opt1" placeholder="Option 1">
+    <input type="text" id="opt2" placeholder="Option 2">
+    <input type="text" id="opt3" placeholder="Option 3">
+    <input type="text" id="opt4" placeholder="Option 4">
+    <input type="text" id="correctAnswer" placeholder="Correct Answer">
+    <button onclick="addQuestion()">Add Question</button>
+
+    <h3>Delete Question</h3>
+    <input type="number" id="deleteIndex" placeholder="Question Index (0-n)">
+    <button onclick="deleteQuestion()">Delete Question</button>
+
+    <h3>Manage Data</h3>
+    <button onclick="downloadQuestions()">📥 Download Questions</button>
+    <button onclick="downloadAttempts()">📥 Download Student Attempts</button>
+
+    <h3>Logout</h3>
+    <button onclick="goHome()">Logout Admin</button>
+
+    <div id="adminInfo"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
