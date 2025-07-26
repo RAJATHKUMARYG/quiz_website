@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner Approval Panel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #ffecd2, #fcb69f);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .approval-container {
+      background: white;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 90%;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+
+    .admin-request {
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+
+    .admin-request p {
+      margin: 0.3rem 0;
+    }
+
+    .actions button {
+      margin-right: 10px;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .approve {
+      background-color: #48bb78;
+      color: white;
+    }
+
+    .reject {
+      background-color: #f56565;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="approval-container">
+    <h2>Pending Admin Approvals</h2>
+    <div id="requests"></div>
+  </div>
+
+  <script>
+    const requestContainer = document.getElementById('requests');
+
+    let admins = JSON.parse(localStorage.getItem('admins')) || [];
+
+    const pending = admins.filter(a => !a.approved);
+
+    if (pending.length === 0) {
+      requestContainer.innerHTML = '<p>No pending requests.</p>';
+    } else {
+      pending.forEach((admin, index) => {
+        const div = document.createElement('div');
+        div.className = 'admin-request';
+        div.innerHTML = `
+          <p><strong>Username:</strong> ${admin.username}</p>
+          <div class="actions">
+            <button class="approve" onclick="approve(${index})">Approve</button>
+            <button class="reject" onclick="reject(${index})">Reject</button>
+          </div>
+        `;
+        requestContainer.appendChild(div);
+      });
+    }
+
+    function approve(index) {
+      const allAdmins = JSON.parse(localStorage.getItem('admins')) || [];
+      const pendingAdmins = allAdmins.filter(a => !a.approved);
+      const toApprove = pendingAdmins[index];
+      const realIndex = allAdmins.findIndex(a => a.username === toApprove.username);
+      allAdmins[realIndex].approved = true;
+      localStorage.setItem('admins', JSON.stringify(allAdmins));
+      alert('Approved!');
+      location.reload();
+    }
+
+    function reject(index) {
+      let allAdmins = JSON.parse(localStorage.getItem('admins')) || [];
+      const pendingAdmins = allAdmins.filter(a => !a.approved);
+      const toReject = pendingAdmins[index];
+      allAdmins = allAdmins.filter(a => a.username !== toReject.username);
+      localStorage.setItem('admins', JSON.stringify(allAdmins));
+      alert('Rejected!');
+      location.reload();
+    }
+  </script>
+</body>
+</html>

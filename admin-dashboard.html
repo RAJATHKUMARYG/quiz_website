@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .dashboard {
+      background-color: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 800px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .section {
+      margin-top: 2rem;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      resize: vertical;
+    }
+
+    .btn {
+      background-color: #4299e1;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      margin-top: 0.5rem;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #3182ce;
+    }
+
+    .question-item {
+      background: #f1f5f9;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .question-item p {
+      margin: 0.3rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h2>Admin Dashboard</h2>
+
+    <div class="section">
+      <h3>Add New Question</h3>
+      <textarea id="new-question" rows="4" placeholder="Enter question, options, correct answer..."></textarea>
+      <button class="btn" onclick="addQuestion()">Add Question</button>
+    </div>
+
+    <div class="section">
+      <h3>Existing Questions</h3>
+      <div id="question-list"></div>
+    </div>
+
+    <div class="section">
+      <h3>Download Data</h3>
+      <button class="btn" onclick="downloadQuestions()">Download Questions</button>
+      <button class="btn" onclick="downloadAttempts()">Download Student Attempts</button>
+    </div>
+  </div>
+
+  <script>
+    function getQuestions() {
+      return JSON.parse(localStorage.getItem("quizQuestions")) || [];
+    }
+
+    function renderQuestions() {
+      const list = document.getElementById("question-list");
+      list.innerHTML = "";
+      const questions = getQuestions();
+      questions.forEach((q, i) => {
+        const item = document.createElement("div");
+        item.className = "question-item";
+        item.innerHTML = `
+          <p><strong>Q${i+1}:</strong> ${q.question}</p>
+          <p><strong>Options:</strong> ${q.options.join(", ")}</p>
+          <p><strong>Answer:</strong> ${q.answer}</p>
+          <button class="btn" style="background-color:#e53e3e" onclick="deleteQuestion(${i})">Delete</button>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function addQuestion() {
+      const input = document.getElementById("new-question").value.trim();
+      if (!input.includes("|")) return alert("Use | to separate question, options, and answer");
+      const parts = input.split("|");
+      const question = parts[0];
+      const options = parts[1].split(",");
+      const answer = parts[2];
+      const all = getQuestions();
+      all.push({ question, options, answer });
+      localStorage.setItem("quizQuestions", JSON.stringify(all));
+      document.getElementById("new-question").value = "";
+      renderQuestions();
+    }
+
+    function deleteQuestion(index) {
+      const all = getQuestions();
+      all.splice(index, 1);
+      localStorage.setItem("quizQuestions", JSON.stringify(all));
+      renderQuestions();
+    }
+
+    function downloadQuestions() {
+      const data = getQuestions();
+      const text = JSON.stringify(data, null, 2);
+      const blob = new Blob([text], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "quiz_questions.json";
+      a.click();
+    }
+
+    function downloadAttempts() {
+      const data = JSON.parse(localStorage.getItem("quizAttempts")) || [];
+      const text = JSON.stringify(data, null, 2);
+      const blob = new Blob([text], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "student_attempts.json";
+      a.click();
+    }
+
+    renderQuestions();
+  </script>
+</body>
+</html>

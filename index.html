@@ -1,74 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Quiz Game</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Game Login</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 2rem;
+      max-width: 400px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .login-container h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .form-group button {
+      width: 100%;
+      background-color: #5a67d8;
+      color: white;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .form-group button:hover {
+      background-color: #434190;
+    }
+
+    .mosaic-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      grid-template-rows: repeat(10, 1fr);
+    }
+
+    .mosaic-bg div {
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+  </style>
 </head>
 <body>
+  <!-- Owner Panel Access Button -->
+  <button onclick="accessOwnerPanel()" style="
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: #000000cc;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    z-index: 999;
+  ">Owner Panel</button>
 
-  <!-- STUDENT LOGIN -->
-  <div class="container" id="login-section">
-    <h1>Student Login</h1>
-    <input type="text" id="name" placeholder="Enter your Name" required>
-    <input type="text" id="usn" placeholder="Enter your USN" required>
-    <button onclick="startQuiz()">Start Quiz</button>
-    <hr>
-    <button onclick="showAdminLogin()">Admin Login</button>
+  <div class="mosaic-bg">
+    <!-- 100 mosaic divs -->
+    <script>
+      for (let i = 0; i < 100; i++) {
+        document.write('<div></div>');
+      }
+    </script>
   </div>
 
-  <!-- ADMIN LOGIN -->
-  <div class="container" id="admin-login-section" style="display:none;">
-    <h2>Admin Login</h2>
-    <input type="password" id="adminPass" placeholder="Enter Admin Password">
-    <button onclick="loginAdmin()">Login as Admin</button>
-    <button onclick="goHome()">Back</button>
+  <div class="login-container">
+    <h2>Login to Quiz</h2>
+    <div class="form-group">
+      <label for="role">Select Role:</label>
+      <select id="role">
+        <option value="student">Student</option>
+        <option value="admin">Admin</option>
+        <option value="register-admin">Register as Admin</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="username">Name/Username:</label>
+      <input type="text" id="username" placeholder="Enter your name or username" />
+    </div>
+    <div class="form-group">
+      <label for="usn">USN (if student):</label>
+      <input type="text" id="usn" placeholder="Enter your USN" />
+    </div>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" placeholder="Enter your password" />
+    </div>
+    <div class="form-group">
+      <button onclick="handleLogin()">Continue</button>
+    </div>
   </div>
 
-  <!-- QUIZ SECTION -->
-  <div class="container" id="quiz-section" style="display:none;">
-    <div id="user-info"></div>
-    <div id="timer">Time Left: <span id="time">30</span> sec</div>
-    <div id="questionBox"></div>
-    <div id="optionsBox"></div>
-    <button onclick="nextQuestion()">Next</button>
-    <div id="answerBox"></div>
-  </div>
+  <script>
+    function handleLogin() {
+      const role = document.getElementById('role').value;
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
 
-  <!-- RESULT -->
-  <div class="container" id="result-section" style="display:none;">
-    <h2>Quiz Completed!</h2>
-    <p id="finalScore"></p>
-    <button onclick="goHome()">Go to Home</button>
-  </div>
+      if (role === 'student') {
+        alert('Welcome student: ' + username);
+        window.location.href = 'quiz.html';
+      } else if (role === 'admin') {
+        const admins = JSON.parse(localStorage.getItem('admins')) || [];
+        const match = admins.find(a => a.username === username && a.password === password && a.approved);
 
-  <!-- ADMIN PANEL -->
-  <div class="container" id="admin-section" style="display:none;">
-    <h2>Admin Panel</h2>
+        if (match) {
+          alert('Admin login successful!');
+          window.location.href = 'admin-dashboard.html';
+        } else {
+          alert('Access Denied or Approval Pending.');
+        }
+      } else if (role === 'register-admin') {
+        let admins = JSON.parse(localStorage.getItem('admins')) || [];
+        admins.push({ username, password, approved: false });
+        localStorage.setItem('admins', JSON.stringify(admins));
+        alert('Request sent to Owner for approval.');
+      }
+    }
 
-    <h3>Add New Question</h3>
-    <input type="text" id="newQuestion" placeholder="Enter Question">
-    <input type="text" id="opt1" placeholder="Option 1">
-    <input type="text" id="opt2" placeholder="Option 2">
-    <input type="text" id="opt3" placeholder="Option 3">
-    <input type="text" id="opt4" placeholder="Option 4">
-    <input type="text" id="correctAnswer" placeholder="Correct Answer">
-    <button onclick="addQuestion()">Add Question</button>
-
-    <h3>Delete Question</h3>
-    <input type="number" id="deleteIndex" placeholder="Question Index (0-n)">
-    <button onclick="deleteQuestion()">Delete Question</button>
-
-    <h3>Manage Data</h3>
-    <button onclick="downloadQuestions()">📥 Download Questions</button>
-    <button onclick="downloadAttempts()">📥 Download Student Attempts</button>
-
-    <h3>Logout</h3>
-    <button onclick="goHome()">Logout Admin</button>
-
-    <div id="adminInfo"></div>
-  </div>
-
-  <script src="script.js"></script>
+    function accessOwnerPanel() {
+      const password = prompt("Enter owner password:");
+      if (password === "admin@123") {
+        window.location.href = "owner-approval.html";
+      } else {
+        alert("Incorrect password!");
+      }
+    }
+  </script>
 </body>
 </html>
